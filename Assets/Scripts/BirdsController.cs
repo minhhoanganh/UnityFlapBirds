@@ -14,12 +14,8 @@ public class BirdsController : MonoBehaviour
     [SerializeField]
     private AudioClip flyClip, pingClip, DeadClip;
 
-    private bool isAlive;
-    private bool didFlap;
-
     private void Awake()
     {
-        isAlive = true;
         myBody = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
@@ -31,15 +27,10 @@ public class BirdsController : MonoBehaviour
 
     void BirdsMoveMent()
     {
-        if(isAlive)
-        {
-            if(didFlap)
-            {
-                didFlap = false;
-                myBody.velocity = new Vector2(myBody.velocity.x, bounceForce);
-                audioSource.PlayOneShot(flyClip);
-            }
-        }
+        myBody.velocity = new Vector2(myBody.velocity.x, bounceForce);
+        audioSource.PlayOneShot(flyClip);
+
+
         float angel = 0;
         if (myBody.velocity.y > 0)
         {
@@ -55,10 +46,5 @@ public class BirdsController : MonoBehaviour
             angel = Mathf.Lerp(0, -90, -myBody.velocity.y / 7);
             transform.rotation = Quaternion.Euler(0, 0, angel);
         }
-    }
-
-    public void FlapButton()
-    {
-        didFlap = true;
     }
 }
