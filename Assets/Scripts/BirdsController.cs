@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BirdsController : MonoBehaviour
 {
+    public static BirdsController instance;
     public float bounceForce;
 
     private Rigidbody2D myBody;
@@ -16,12 +17,26 @@ public class BirdsController : MonoBehaviour
 
     private bool isAlive;
     private bool didFlap;
+    private GameObject spawner;
+
+    public float flag = 0;
+    public int score;
 
     private void Awake()
     {
         isAlive = true;
         myBody = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        spawner = GameObject.Find("Spawner Pipe");
+        MakeInstance();
+    }
+
+    void MakeInstance()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
     }
 
     private void FixedUpdate()
@@ -60,5 +75,37 @@ public class BirdsController : MonoBehaviour
     public void FlapButton()
     {
         didFlap = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D target)
+    {
+        if(target.tag == "PipeHolder")
+        {
+            score++;
+            if(MainController.instance != null)
+            {
+                MainController.instance.SetScore(score);
+            }
+            audioSource.PlayOneShot(pingClip);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D target)
+    {
+        if(target.gameObject.tag == "Pipe" || target.gameObject.tag == "Ground")
+        {
+            flag = 1;
+            if(isAlive)
+            {
+                isAlive = false;
+                Destroy(spawner);
+                audioSource.PlayOneShot(DeadClip);
+                anim.SetTrigger("Died");
+                if(MainController.instance != null)
+                {
+                    MainController.instance.BirdsDiedShowPanel(score);
+                }
+            }
+        }
     }
 }
