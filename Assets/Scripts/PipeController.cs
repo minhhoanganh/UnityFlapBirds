@@ -15,6 +15,13 @@ public class PipeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(BirdsController.instance.flag != null)
+        {
+            if(BirdsController.instance.flag == 1)
+            {
+                Destroy(GetComponent<PipeController>());
+            }
+        }
         PipeMoveMent();
     }
 
@@ -24,5 +31,13 @@ public class PipeController : MonoBehaviour
         temp.x -= speed * Time.deltaTime;
 
         transform.position = temp;
+    }
+
+    private void OnTriggerEnter2D(Collider2D target)
+    {
+        if(target.tag == "Destroy")
+        {
+            Destroy(gameObject);
+        }
     }
 }
